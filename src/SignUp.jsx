@@ -1,14 +1,27 @@
-// src/SignUp.jsx
-import React, { useState } from 'react';
-import './SignUp.css';
+// src/MembersSignUp.jsx
+import React, { useState, useEffect } from 'react';
+import './MembersSignUp.css';
+import Header from './Header';  // Import the updated Header component
 
-const SignUp = () => {
+const MembersSignUp = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
   });
-
+  
   const [signUps, setSignUps] = useState([]);
+  const [memberData, setMemberData] = useState(null);
+  const [error, setError] = useState(null);
+  const [useEnteredValue, setUseEnteredValue] = useState(false);
+
+  useEffect(() => {
+    if (formData.name) {
+      const timeoutId = setTimeout(() => {
+        fetchMemberData(formData.name);
+      }, 500); // Debounce by waiting 500ms after typing stops
+      return () => clearTimeout(timeoutId); // Clean up the timeout on component update
+    }
+  }, [formData.name]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,31 +29,61 @@ const SignUp = () => {
       ...prevData,
       [name]: value,
     }));
+    setUseEnteredValue(false); // Reset flag when user types again
+  };
+
+  const fetchMemberData = async (name) => {
+    try {
+      const response = await fetch(`https://api.usatt.org/members?name=${name}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch member data');
+      }
+
+      const data = await response.json();
+
+      if (data && data.length > 0) {
+        setMemberData(data[0]);
+        setError(null);
+      } else {
+        setUseEnteredValue(true);
+        setMemberData(null);
+      }
+    } catch (err) {
+      setError(err.message);
+      setUseEnteredValue(true);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Append the current form data to the sign-up list
-    setSignUps((prevSignUps) => [...prevSignUps, formData]);
+    const finalName = useEnteredValue ? formData.name : memberData?.name || formData.name;
+    const finalEmail = formData.email;
 
-    // Clear the form fields after submission
+    setSignUps((prevSignUps) => [...prevSignUps, { name: finalName, email: finalEmail }]);
+
     setFormData({ name: '', email: '' });
+    setMemberData(null);
+    setUseEnteredValue(false);
   };
 
   const handleDelete = (indexToDelete) => {
-    // Filter out the sign-up entry that matches the index
     setSignUps(signUps.filter((_, index) => index !== indexToDelete));
   };
 
   return (
     <>
-      <h1>League Sign Up</h1>
+      {/* Pass player count as a prop to the Header */}
+      <Header playerCount={signUps.length} />
 
-      {/* Sign-Up form wrapped inside <form> to handle Enter key */}
-      <form onSubmit={handleSubmit}>
-      <div class="form-group">
+      {/* Sign-Up form */}
+      <form className="signup-form" onSubmit={handleSubmit}>
         <input
-          className='form-control'
           type="text"
           name="name"
           value={formData.name}
@@ -57,23 +100,30 @@ const SignUp = () => {
           required
         />
         <button type="submit">Add</button>
-        </div>
       </form>
+
+      {error && <p>Error: {error}</p>}
+
+      <h2>Fetched Member Data</h2>
+      {memberData && (
+        <div>
+          <p>Member Name: {memberData.name}</p>
+          <p>Member Rating: {memberData.rating}</p>
+        </div>
+      )}
 
       <h2>Sign Up List</h2>
       <div className="cards-container">
-        {/* Render the sign-up list as cards */}
-        {signUps.length > 0 &&
-          signUps.map((signUp, index) => (
-            <div key={index} className="card">
-              <button className="delete-btn" onClick={() => handleDelete(index)}>X</button>
-              <h3>{signUp.name}</h3>
-              <p>{signUp.email}</p>
-            </div>
-          ))}
+        {signUps.map((signUp, index) => (
+          <div key={index} className="card">
+            <button className="delete-btn" onClick={() => handleDelete(index)}>X</button>
+            <h3>{signUp.name}</h3>
+            <p>{signUp.email}</p>
+          </div>
+        ))}
       </div>
     </>
   );
 };
 
-export default SignUp;
+export default MembersSignUp;

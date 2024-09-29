@@ -1,9 +1,9 @@
   import MembersSignUp from "./MembersSignUp";
-  const MainContent = () => {
+  const MainContent = ({ setPlayerCount }) => {
     return (
       <main className="App-main">
       <div className="SignUp">
-        <MembersSignUp />
+        <MembersSignUp setPlayerCount={setPlayerCount} />
       </div>
       </main>
     );
