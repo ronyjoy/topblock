@@ -1,0 +1,76 @@
+/* src/App.css */
+.App {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 100px; /* Adds 20px padding to all sides */
+    background-color: #f0f0f0; /* Optional: Background color for visualization */
+    border: 1px solid #ccc; /* Optional: Border for visual representation */
+    border-radius: 15px
+  }
+  
+  .App-header {
+    background-color: #001c54;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    border-radius: 15px 15px 0 0
+  }
+  
+  .App-header nav a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .App-header nav a:hover {
+    text-decoration: underline;
+  }
+  
+  .App-main {
+    flex: 1;
+    padding: 20px;
+    background-color: #cdccd8;
+  }
+  
+  form {
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    padding: 10px;
+    border: 1px solid #b5b5b5;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #7d7d7d;
+  }
+  
+  button {
+    padding: 10px 15px;
+    background-color: #a5aaa5;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #191a19;
+  }
+  
+  .App-footer {
+    background-color: #001c54;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 0 0 15px 15px
+  }
+  
