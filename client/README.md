@@ -9,4 +9,4 @@ Currently, two official plugins are available:
 # topblock
 # topblock
 # topblock
-# topblock
+# topblock - BaseClass
